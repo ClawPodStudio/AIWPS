@@ -36,7 +36,8 @@ const routes = [
       { path: 'wrong-stats', name: 'WrongStats', component: () => import('@/views/teacher/WrongStats.vue'), meta: { title: '错题统计' } },
       { path: 'ai-generate', name: 'AIGenerate', component: () => import('@/views/teacher/AIGenerate.vue'), meta: { title: 'AI智能出题' } },
       { path: 'statistics', name: 'Statistics', component: () => import('@/views/teacher/Statistics.vue'), meta: { title: '数据统计' } },
-      { path: 'profile', name: 'TeacherProfile', component: () => import('@/views/teacher/Profile.vue'), meta: { title: '个人中心' } }
+      { path: 'profile', name: 'TeacherProfile', component: () => import('@/views/teacher/Profile.vue'), meta: { title: '个人中心' } },
+      { path: 'qr-scan', name: 'QRScan', component: () => import('@/views/teacher/QRScan.vue'), meta: { title: '二维码验证' } }
     ]
   },
   

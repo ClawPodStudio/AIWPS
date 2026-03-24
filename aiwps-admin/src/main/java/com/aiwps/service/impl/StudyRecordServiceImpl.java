@@ -1,6 +1,7 @@
 package com.aiwps.service.impl;
 
 import com.aiwps.entity.StudyRecord;
+import com.aiwps.mapper.StudyRecordMapper;
 import com.aiwps.service.StudyRecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

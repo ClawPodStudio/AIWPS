@@ -35,3 +35,13 @@ export function addPaperQuestion(data) {
 export function removePaperQuestion(paperId, questionId) {
   return request({ url: `/paper/${paperId}/question/${questionId}`, method: 'delete' })
 }
+
+// 生成试卷二维码
+export function generatePaperQRCode(paperId) {
+  return request({ url: `/paper/${paperId}/qrcode`, method: 'post' })
+}
+
+// 扫描二维码验证
+export function scanQRCode(token) {
+  return request({ url: '/qr/scan', method: 'get', params: { token } })
+}

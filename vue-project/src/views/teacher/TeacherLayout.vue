@@ -7,6 +7,7 @@
         <el-menu-item index="/teacher/dashboard"><el-icon><HomeFilled /></el-icon><span>教学首页</span></el-menu-item>
         <el-menu-item index="/teacher/questions"><el-icon><Document /></el-icon><span>题目管理</span></el-menu-item>
         <el-menu-item index="/teacher/papers"><el-icon><Tickets /></el-icon><span>试卷管理</span></el-menu-item>
+        <el-menu-item index="/teacher/qr-scan"><el-icon><Link /></el-icon><span>二维码验证</span></el-menu-item>
         <el-menu-item index="/teacher/students"><el-icon><User /></el-icon><span>学生管理</span></el-menu-item>
         <el-menu-item index="/teacher/wrong-stats"><el-icon><Warning /></el-icon><span>错题统计</span></el-menu-item>
         <el-menu-item index="/teacher/ai-generate"><el-icon><MagicStick /></el-icon><span>AI智能出题</span></el-menu-item>
@@ -22,6 +23,7 @@
         <el-menu-item index="/teacher/dashboard"><el-icon><HomeFilled /></el-icon><span>教学首页</span></el-menu-item>
         <el-menu-item index="/teacher/questions"><el-icon><Document /></el-icon><span>题目管理</span></el-menu-item>
         <el-menu-item index="/teacher/papers"><el-icon><Tickets /></el-icon><span>试卷管理</span></el-menu-item>
+        <el-menu-item index="/teacher/qr-scan"><el-icon><Link /></el-icon><span>二维码验证</span></el-menu-item>
         <el-menu-item index="/teacher/students"><el-icon><User /></el-icon><span>学生管理</span></el-menu-item>
         <el-menu-item index="/teacher/wrong-stats"><el-icon><Warning /></el-icon><span>错题统计</span></el-menu-item>
         <el-menu-item index="/teacher/ai-generate"><el-icon><MagicStick /></el-icon><span>AI智能出题</span></el-menu-item>
@@ -60,7 +62,7 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { HomeFilled, Document, Tickets, User, Warning, MagicStick, DataAnalysis, Setting, Fold } from '@element-plus/icons-vue'
+import { HomeFilled, Document, Tickets, User, Warning, MagicStick, DataAnalysis, Setting, Fold, Link } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()

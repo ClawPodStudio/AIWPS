@@ -5,14 +5,15 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("study_record")
-public class StudyRecord {
+@TableName("paper_question")
+public class PaperQuestion {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private Long studentId;
+    private Long paperId;
     private Long questionId;
-    private Integer result;
-    private Integer timeSpent;
-    private String source;
+    @TableField("sort_order")
+    private Integer questionOrder;
+    private Integer score;
+    @TableField("created_at")
     private LocalDateTime createdAt;
 }

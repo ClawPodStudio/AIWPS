@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 public class Paper {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String name;
+    private Long tenantId;
+    private Long teacherId;
+    private String title;
     private Long subjectId;
     private Long gradeId;
-    private Long tenantId;
     private Integer totalScore;
     private Integer questionCount;
-    private String type;
-    private String description;
+    private String paperType;
     private Integer status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

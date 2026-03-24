@@ -9,14 +9,11 @@ import java.time.LocalDateTime;
 public class KnowledgePoint {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String name;
     private Long subjectId;
     private Long gradeId;
     private Long parentId;
-    private String level;
+    private String name;
+    private Integer level;
     private Integer sortOrder;
-    private String description;
-    private Integer status;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

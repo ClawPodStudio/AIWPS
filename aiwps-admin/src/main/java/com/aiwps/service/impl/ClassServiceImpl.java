@@ -1,6 +1,7 @@
 package com.aiwps.service.impl;
 
 import com.aiwps.entity.ClassInfo;
+import com.aiwps.mapper.ClassMapper;
 import com.aiwps.service.ClassService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

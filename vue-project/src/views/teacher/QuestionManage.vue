@@ -21,8 +21,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="题型">
-            <el-select v-model="searchForm.type" placeholder="全部" clearable style="width: 100px">
-              <el-option label="选择" value="CHOICE" /><el-option label="填空" value="BLANK" /><el-option label="解答" value="ANSWER" />
+            <el-select v-model="searchForm.typeCategory" placeholder="全部" clearable style="width: 120px">
+              <el-option v-for="t in questionTypes" :key="t.id" :label="t.name" :value="t.code" />
             </el-select>
           </el-form-item>
           <el-form-item><el-button type="primary" @click="loadQuestions">搜索</el-button><el-button @click="resetSearch">重置</el-button></el-form-item>
@@ -34,8 +34,10 @@
         <el-table-column prop="content" label="题目内容" show-overflow-tooltip min-width="200" />
         <el-table-column prop="subjectName" label="学科" width="80" />
         <el-table-column prop="gradeName" label="年级" width="80" />
-        <el-table-column prop="type" label="题型" width="80">
-          <template #default="{ row }">{{ {CHOICE:'选择',BLANK:'填空',ANSWER:'解答'}[row.type] }}</template>
+        <el-table-column prop="typeCategory" label="题型" width="100">
+          <template #default="{ row }">
+            {{ getTypeName(row.typeCategory) }}
+          </template>
         </el-table-column>
         <el-table-column prop="difficulty" label="难度" width="80">
           <template #default="{ row }">
@@ -65,10 +67,10 @@
             <el-option v-for="g in grades" :key="g.id" :label="g.name" :value="g.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="题型" prop="type">
-          <el-radio-group v-model="questionForm.type">
-            <el-radio label="CHOICE">选择题</el-radio><el-radio label="BLANK">填空题</el-radio><el-radio label="ANSWER">解答题</el-radio>
-          </el-radio-group>
+        <el-form-item label="题型" prop="typeCategory">
+          <el-select v-model="questionForm.typeCategory" style="width:100%">
+            <el-option v-for="t in questionTypes" :key="t.id" :label="t.name" :value="t.code" />
+          </el-select>
         </el-form-item>
         <el-form-item label="题目" prop="content">
           <el-input v-model="questionForm.content" type="textarea" :rows="3" />
@@ -100,6 +102,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getSubjectList, getGradeList } from '@/api/base'
+import { getQuestionTypeList } from '@/api/base'
 import { getQuestionList, addQuestion, updateQuestion, deleteQuestion as deleteQuestionApi } from '@/api/question'
 
 const loading = ref(false)
@@ -107,11 +110,17 @@ const showAddDialog = ref(false)
 const editingQuestion = ref(null)
 const subjects = ref([])
 const grades = ref([])
+const questionTypes = ref([])
 const questions = ref([])
-const searchForm = reactive({ subjectId: '', gradeId: '', type: '' })
+const searchForm = reactive({ subjectId: '', gradeId: '', typeCategory: '' })
 const pagination = reactive({ page: 1, size: 10, total: 0 })
-const questionForm = reactive({ subjectId: '', gradeId: '', type: 'CHOICE', content: '', optionA: '', optionB: '', optionC: '', optionD: '', answer: '', analysis: '', difficulty: 2 })
-const formRules = { subjectId: [{ required: true, message: '请选择学科', trigger: 'change' }], gradeId: [{ required: true, message: '请选择年级', trigger: 'change' }], content: [{ required: true, message: '请输入题目', trigger: 'blur' }], answer: [{ required: true, message: '请输入答案', trigger: 'blur' }] }
+const questionForm = reactive({ subjectId: '', gradeId: '', typeCategory: '', content: '', optionA: '', optionB: '', optionC: '', optionD: '', answer: '', analysis: '', difficulty: 2 })
+const formRules = { subjectId: [{ required: true, message: '请选择学科', trigger: 'change' }], gradeId: [{ required: true, message: '请选择年级', trigger: 'change' }], typeCategory: [{ required: true, message: '请选择题型', trigger: 'change' }], content: [{ required: true, message: '请输入题目', trigger: 'blur' }], answer: [{ required: true, message: '请输入答案', trigger: 'blur' }] }
+
+const getTypeName = (code) => {
+  const type = questionTypes.value.find(t => t.code === code)
+  return type ? type.name : code
+}
 
 const loadQuestions = async () => {
   loading.value = true
@@ -136,7 +145,7 @@ const submitQuestion = async () => {
 const resetSearch = () => { Object.keys(searchForm).forEach(k => searchForm[k] = ''); loadQuestions() }
 const formRef = ref()
 
-onMounted(async () => { subjects.value = await getSubjectList() || []; grades.value = await getGradeList() || []; loadQuestions() })
+onMounted(async () => { subjects.value = await getSubjectList() || []; grades.value = await getGradeList() || []; questionTypes.value = await getQuestionTypeList() || []; loadQuestions() })
 </script>
 
 <style scoped>

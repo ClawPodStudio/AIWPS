@@ -21,15 +21,13 @@ public class WrongQuestionController {
     public Map<String, Object> list(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) Long subjectId,
-            @RequestParam(required = false) Long gradeId,
+            @RequestParam(required = false) Long studentId,
+            @RequestParam(required = false) Integer isCorrected,
             @RequestParam(required = false) String status) {
         
         LambdaQueryWrapper<WrongQuestion> wrapper = new LambdaQueryWrapper<>();
-        if (userId != null) wrapper.eq(WrongQuestion::getUserId, userId);
-        if (subjectId != null) wrapper.eq(WrongQuestion::getSubjectId, subjectId);
-        if (gradeId != null) wrapper.eq(WrongQuestion::getGradeId, gradeId);
+        if (studentId != null) wrapper.eq(WrongQuestion::getStudentId, studentId);
+        if (isCorrected != null) wrapper.eq(WrongQuestion::getIsCorrected, isCorrected);
         if (status != null && !status.isEmpty()) wrapper.eq(WrongQuestion::getStatus, status);
         
         wrapper.orderByDesc(WrongQuestion::getCreatedAt);
@@ -43,9 +41,9 @@ public class WrongQuestionController {
     }
     
     @GetMapping("/stats")
-    public Map<String, Object> stats(@RequestParam(required = false) Long userId) {
+    public Map<String, Object> stats(@RequestParam(required = false) Long studentId) {
         LambdaQueryWrapper<WrongQuestion> wrapper = new LambdaQueryWrapper<>();
-        if (userId != null) wrapper.eq(WrongQuestion::getUserId, userId);
+        if (studentId != null) wrapper.eq(WrongQuestion::getStudentId, studentId);
         
         long totalWrong = wrongQuestionService.count(wrapper);
         

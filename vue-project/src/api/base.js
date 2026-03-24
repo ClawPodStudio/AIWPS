@@ -15,3 +15,8 @@ export function getKnowledgePointList(params) {
 export function getKnowledgePointTree(subjectId, gradeId) {
   return request({ url: '/knowledge-point/tree', method: 'get', params: { subjectId, gradeId } })
 }
+
+// 题型管理
+export function getQuestionTypeList() {
+  return request({ url: '/question-type/list', method: 'get' })
+}

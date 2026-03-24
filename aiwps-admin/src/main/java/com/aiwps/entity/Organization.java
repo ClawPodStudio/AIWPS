@@ -9,15 +9,12 @@ import java.time.LocalDateTime;
 public class Organization {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private String name;
-    private String code;
     private Long tenantId;
+    private String name;
+    private String type;
     private String province;
-    private String city;
-    private String address;
-    private String contact;
-    private String phone;
+    private String contactName;
+    private String contactMobile;
     private Integer status;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

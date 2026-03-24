@@ -2,21 +2,20 @@ package com.aiwps.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("review_plan")
-public class ReviewPlan {
+@TableName("knowledge_mastery")
+public class KnowledgeMastery {
     @TableId(type = IdType.AUTO)
     private Long id;
-    private Long userId;
+    private Long studentId;
     private Long knowledgePointId;
-    private LocalDate planDate;
-    private LocalDate reviewDate;
-    private Integer reviewCount;
+    private Integer masteryLevel;
+    private Integer correctCount;
     private Integer totalCount;
-    private String status;
+    private LocalDateTime lastReviewTime;
+    private Integer masteryStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

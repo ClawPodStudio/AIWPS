@@ -54,7 +54,6 @@ public class KnowledgePointController {
         
         List<KnowledgePoint> allPoints = knowledgePointService.list(wrapper);
         
-        // Build tree structure
         List<KnowledgePoint> rootPoints = allPoints.stream()
                 .filter(p -> p.getParentId() == null || p.getParentId() == 0)
                 .collect(Collectors.toList());
@@ -75,7 +74,7 @@ public class KnowledgePointController {
         node.put("subjectId", point.getSubjectId());
         node.put("gradeId", point.getGradeId());
         node.put("parentId", point.getParentId());
-        node.put("description", point.getDescription());
+        node.put("level", point.getLevel());
         
         List<KnowledgePoint> children = allPoints.stream()
                 .filter(p -> Objects.equals(p.getParentId(), point.getId()))
