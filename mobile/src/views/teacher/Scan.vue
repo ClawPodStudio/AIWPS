@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Button, Toast, Dialog, Field, Popup } from 'vant'
+import { showToast, showDialog } from 'vant'
 import QRCode from 'qrcode'
 
 const router = useRouter()

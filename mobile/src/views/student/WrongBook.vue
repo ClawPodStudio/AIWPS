@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Tab, Tabs } from 'vant'
+
 
 const router = useRouter()
 const activeTab = ref(0)

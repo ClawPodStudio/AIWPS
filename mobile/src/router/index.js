@@ -88,8 +88,17 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/m-aiwps/'),
   routes
+})
+
+// 路由鉴权
+router.beforeEach((to, from) => {
+  const token = localStorage.getItem('token')
+  if (!token && to.path !== '/login') {
+    return '/login'
+  }
+  return true
 })
 
 export default router

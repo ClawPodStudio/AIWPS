@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Tabbar, TabbarItem } from 'vant'
 
 const route = useRoute()
 

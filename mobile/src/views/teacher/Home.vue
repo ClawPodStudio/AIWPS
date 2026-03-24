@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Card, Skeleton, Empty } from 'vant'
+
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()

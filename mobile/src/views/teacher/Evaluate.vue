@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Toast, Field } from 'vant'
+import { showToast } from 'vant'
 
 const route = useRoute()
 const router = useRouter()
@@ -72,7 +72,7 @@ const submitEvaluation = () => {
   // Simulate API call
   setTimeout(() => {
     loading.value = false
-    Toast.success('评价提交成功')
+    showSuccessToast('评价提交成功')
     router.back()
   }, 1000)
 }

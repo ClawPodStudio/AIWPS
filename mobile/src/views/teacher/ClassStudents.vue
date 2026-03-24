@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Empty } from 'vant'
+
 
 const route = useRoute()
 const router = useRouter()

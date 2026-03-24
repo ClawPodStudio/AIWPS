@@ -1,12 +1,11 @@
 import axios from 'axios'
-import { showToast, showLoadingToast, closeToast } from 'vant'
+import { showToast } from 'vant'
 
 const request = axios.create({
-  baseURL: '/api',
+  baseURL: '/m-aiwps/api',
   timeout: 15000
 })
 
-// Request interceptor
 request.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token')
@@ -15,20 +14,17 @@ request.interceptors.request.use(
     }
     return config
   },
-  error => {
-    return Promise.reject(error)
-  }
+  error => Promise.reject(error)
 )
 
-// Response interceptor
 request.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code === 200 || res.success) {
+    if (res && (res.code === 200 || res.success)) {
       return res.data !== undefined ? res.data : res
     } else {
-      showToast(res.message || '请求失败')
-      return Promise.reject(new Error(res.message || '请求失败'))
+      showToast(res?.message || '请求失败')
+      return Promise.reject(new Error(res?.message || '请求失败'))
     }
   },
   error => {

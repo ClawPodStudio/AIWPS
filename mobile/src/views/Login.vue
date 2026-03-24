@@ -1,8 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Field, Button, Toast, RadioGroup, Radio } from 'vant'
+import { showToast, showSuccessToast, showFailToast } from 'vant'
 import { useUserStore } from '@/stores/user'
+import request from '@/api/index'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -19,37 +20,34 @@ const form = ref({
 const isPhoneLogin = computed(() => loginType.value === 'phone')
 
 const handleLogin = async () => {
-  if (!form.value.password && !form.value.phone) {
-    Toast('请输入账号或密码')
+  if (!form.value.username || !form.value.password) {
+    showFailToast('请输入账号和密码')
     return
   }
-  
+
   loading.value = true
-  
-  // Simulate login - in production, call API
-  setTimeout(() => {
-    const mockToken = 'mock_token_' + Date.now()
-    const mockUserInfo = {
-      id: 1,
-      name: loginType.value === 'teacher' ? '张老师' : '李同学',
-      phone: form.value.phone || '13800138000',
-      avatar: ''
+  try {
+    const loginData = {
+      username: form.value.username,
+      password: form.value.password
     }
-    
-    userStore.setToken(mockToken)
-    userStore.setUserInfo(mockUserInfo)
+    const res = await request.post('/user/login', loginData)
+    const { token, user } = res
+    userStore.setToken(token)
+    userStore.setUserInfo(user)
     userStore.setUserType(loginType.value)
-    
-    loading.value = false
-    
-    Toast.success('登录成功')
-    
+    showSuccessToast('登录成功')
     if (loginType.value === 'teacher') {
       router.replace('/teacher/home')
     } else {
       router.replace('/student/home')
     }
-  }, 1000)
+  } catch (e) {
+    console.error('[Login] error:', e)
+    showFailToast(e.message || '登录失败，请检查账号密码')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -93,8 +91,8 @@ const handleLogin = async () => {
       <div class="form-items">
         <div class="form-item">
           <van-field
-            v-model="form.phone"
-            placeholder="请输入手机号"
+            v-model="form.username"
+            placeholder="请输入账号"
             :border="false"
             clearable
           >

@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { Dialog, Toast } from 'vant'
+import { showSuccessToast } from 'vant'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -22,13 +22,13 @@ const menuItems = [
 ]
 
 const handleLogout = () => {
-  Dialog.confirm({
+  showDialog({
     title: '确认退出',
     message: '确定要退出登录吗？',
     confirmButtonColor: '#667eea'
   }).then(() => {
     userStore.logout()
-    Toast.success('已退出登录')
+    showSuccessToast('已退出登录')
     router.replace('/login')
   }).catch(() => {})
 }
