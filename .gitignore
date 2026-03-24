@@ -1,0 +1,94 @@
+# ======================================
+# 后端：SpringBoot (Maven/Gradle)
+# ======================================
+# IDE 配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+
+# 编译输出目录
+target/
+build/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+*.logs
+
+# Maven/Gradle 缓存
+.mvn/
+gradle/
+gradlew
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+
+# 日志文件
+logs/
+*.log
+*.log.*
+logback*.log
+
+# 本地配置文件
+application-local.yml
+application-local.properties
+application-dev.yml
+application-dev.properties
+
+# 数据库文件
+*.db
+*.sqlite
+*.sql
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+.DS_Store
+
+
+# ======================================
+# 前端：Vue / Vite / Webpack
+# ======================================
+# 依赖目录
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 构建产物
+dist/
+dist-ssr/
+*.local
+
+# 编辑器/IDE 缓存
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 环境变量（本地密钥）
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 测试/缓存
+coverage/
+*.lcov
+.cypress/
