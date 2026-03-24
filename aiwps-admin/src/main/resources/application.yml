@@ -8,6 +8,18 @@ spring:
     username: root
     password: root
 
+# AI LLM Configuration
+ai:
+  llm:
+    provider: openai  # openai, spark, wenxin, zhipu
+    api-key: ${OPENAI_API_KEY:}  # Set via environment variable
+    api-secret: ${LLM_API_SECRET:}
+    base-url: ${OPENAI_BASE_URL:}  # Optional, for proxy
+    model: gpt-3.5-turbo
+    max-tokens: 2048
+    temperature: 0.7
+    system-prompt: 你是一位专业的中学辅导老师，擅长根据知识点出题。
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
