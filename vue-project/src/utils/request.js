@@ -20,11 +20,16 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   response => {
     const res = response.data
-    if (res.code === 200 || res.code === 0) {
+    // 如果返回的是裸数组（如 /subject/list），直接返回
+    if (Array.isArray(res)) {
+      return res
+    }
+    // 标准包装格式 {code, msg, data}
+    if (res && (res.code === 200 || res.code === 0)) {
       return res.data !== undefined ? res.data : res
     }
-    ElMessage.error(res.message || '请求失败')
-    return Promise.reject(new Error(res.message || '请求失败'))
+    // 其他情况（可能是分页结构或裸对象）也直接返回
+    return res
   },
   error => {
     if (error.response) {
@@ -32,7 +37,7 @@ request.interceptors.response.use(
         ElMessage.error('登录已过期，请重新登录')
         localStorage.removeItem('token')
         localStorage.removeItem('userRole')
-        window.location.href = '/login'
+        window.location.href = '/aiwps/login'
       } else {
         ElMessage.error(error.response.data?.message || '请求失败')
       }
