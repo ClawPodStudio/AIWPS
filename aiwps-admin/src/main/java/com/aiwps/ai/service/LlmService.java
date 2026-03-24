@@ -122,9 +122,10 @@ public class LlmService {
         try {
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", aiConfig.getModel());
-            requestBody.put("messages", new JSONArray().add(new JSONObject()
-                    .put("role", "user")
-                    .put("content", prompt)));
+            JSONObject messageObj = new JSONObject();
+            messageObj.put("role", "user");
+            messageObj.put("content", prompt);
+            requestBody.put("messages", new JSONArray().add(messageObj));
             requestBody.put("max_tokens", aiConfig.getMaxTokens());
             requestBody.put("temperature", aiConfig.getTemperature());
             
@@ -185,9 +186,10 @@ public class LlmService {
         try {
             JSONObject requestBody = new JSONObject();
             requestBody.put("model", aiConfig.getModel());
-            requestBody.put("messages", new JSONArray().add(new JSONObject()
-                    .put("role", "user")
-                    .put("content", prompt)));
+            JSONObject messageObj = new JSONObject();
+            messageObj.put("role", "user");
+            messageObj.put("content", prompt);
+            requestBody.put("messages", new JSONArray().add(messageObj));
             requestBody.put("max_tokens", aiConfig.getMaxTokens());
             requestBody.put("temperature", aiConfig.getTemperature());
             

@@ -79,10 +79,12 @@ const handleLogin = async () => {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
 
 .login-box {
   width: 420px;
+  max-width: 100%;
   padding: 40px;
   background: white;
   border-radius: 12px;
@@ -107,5 +109,18 @@ const handleLogin = async () => {
 
 .login-form {
   margin-top: 20px;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 24px 20px;
+    border-radius: 8px;
+  }
+  .login-header h1 {
+    font-size: 28px;
+  }
+  .login-header p {
+    font-size: 14px;
+  }
 }
 </style>

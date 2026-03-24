@@ -38,7 +38,7 @@
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-icon hot">
-            <el-icon><Hot /></el-icon>
+            <el-icon><Star /></el-icon>
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.hotKnowledge }}</div>
@@ -148,7 +148,7 @@
 import { ref, reactive, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import * as echarts from 'echarts'
-import { Warning, CircleClose, CircleCheck, Hot } from '@element-plus/icons-vue'
+import { Warning, CircleClose, CircleCheck, Star } from '@element-plus/icons-vue'
 import { getWrongQuestionStats, getWrongQuestionList } from '@/api/question'
 import { getSubjectList } from '@/api/base'
 
