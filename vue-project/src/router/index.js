@@ -1,6 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
+  // 根路径重定向到登录
+  { path: '/', redirect: '/login' },
+  
   // Login
   { path: '/login', name: 'Login', component: () => import('@/views/common/Login.vue') },
   
@@ -62,7 +65,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory('/aiwps'),
+  history: createWebHashHistory(),
   routes
 })
 

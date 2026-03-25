@@ -8,8 +8,8 @@ export function logout() {
   return request({ url: '/user/logout', method: 'post' })
 }
 
-export function getUserInfo() {
-  return request({ url: '/user/info', method: 'get' })
+export function getUserInfo(role) {
+  return request({ url: '/user/info', method: 'get', params: { role } })
 }
 
 export function getUserList(params) {

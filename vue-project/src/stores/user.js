@@ -44,7 +44,8 @@ export const useUserStore = defineStore('user', () => {
   async function fetchUserInfo() {
     if (!token.value) return
     try {
-      const data = await getUserInfoApi()
+      const role = localStorage.getItem('role')
+      const data = await getUserInfoApi(role)
       setUserInfo(data)
     } catch (e) { logout() }
   }

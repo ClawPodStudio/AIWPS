@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/question")
@@ -17,6 +19,9 @@ public class QuestionController {
     
     @Autowired
     private QuestionService questionService;
+    
+    @Autowired
+    private com.aiwps.mapper.QuestionMapper questionMapper;
     
     @GetMapping("/list")
     public Map<String, Object> list(
@@ -135,5 +140,35 @@ public class QuestionController {
             return Map.of("code", 200, "msg", "删除成功");
         }
         return Map.of("code", 400, "msg", "删除失败");
+    }
+
+    /**
+     * 获取练习题目
+     */
+    @GetMapping("/practice")
+    public Map<String, Object> practice(
+            @RequestParam(required = false) Long subjectId,
+            @RequestParam(required = false) Long gradeId,
+            @RequestParam(defaultValue = "10") Integer count) {
+        
+        LambdaQueryWrapper<Question> wrapper = new LambdaQueryWrapper<>();
+        if (subjectId != null) wrapper.eq(Question::getSubjectId, subjectId);
+        if (gradeId != null) wrapper.eq(Question::getGradeId, gradeId);
+        wrapper.eq(Question::getStatus, 1);
+        wrapper.last("LIMIT " + count);
+        
+        List<Question> questions = questionMapper.selectList(wrapper);
+        
+        List<Map<String, Object>> result = questions.stream().map(q -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", q.getId());
+            map.put("content", q.getContent());
+            map.put("type", q.getType());
+            map.put("difficulty", q.getDifficulty());
+            map.put("answer", "");
+            return map;
+        }).collect(Collectors.toList());
+        
+        return Map.of("code", 200, "data", result);
     }
 }
