@@ -68,7 +68,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const userRole = localStorage.getItem('userRole')
+  const userRole = localStorage.getItem('role')
   
   if (to.path === '/login') {
     next()

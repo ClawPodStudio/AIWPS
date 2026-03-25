@@ -129,9 +129,9 @@ const handleLogin = async () => {
         role: form.role
       })
       
-      if (res.code === 200 || res.code === 0) {
-        localStorage.setItem('token', res.data?.token)
-        localStorage.setItem('userInfo', JSON.stringify(res.data?.userInfo || {}))
+      if (res && res.token) {
+        localStorage.setItem('token', res.token)
+        localStorage.setItem('userInfo', JSON.stringify(res.user || {}))
         localStorage.setItem('role', form.role)
         
         ElMessage.success('登录成功')
