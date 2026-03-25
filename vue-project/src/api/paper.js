@@ -45,3 +45,23 @@ export function generatePaperQRCode(paperId) {
 export function scanQRCode(token) {
   return request({ url: '/qr/scan', method: 'get', params: { token } })
 }
+
+// AI生成试卷
+export function aiGeneratePaper(data) {
+  return request({ url: '/paper/ai-generate', method: 'post', data })
+}
+
+// 获取AI试卷模板列表
+export function getPaperTemplates(subjectId) {
+  return request({ url: '/paper/templates', method: 'get', params: { subjectId } })
+}
+
+// 获取知识点可选范围
+export function getKnowledgeRange(subjectId, gradeId) {
+  return request({ url: '/paper/knowledge-range', method: 'get', params: { subjectId, gradeId } })
+}
+
+// 获取试卷详情(含题目)
+export function getPaperDetail(id) {
+  return request({ url: `/paper/${id}`, method: 'get' })
+}

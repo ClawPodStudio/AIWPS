@@ -4,7 +4,10 @@
       <template #header>
         <div class="card-header">
           <span>试卷管理</span>
-          <el-button type="primary" @click="showAddDialog = true"><el-icon><Plus /></el-icon>创建试卷</el-button>
+          <div style="display:flex;gap:10px">
+            <el-button type="success" @click="router.push('/teacher/ai-paper')"><el-icon><MagicStick /></el-icon>AI生成试卷</el-button>
+            <el-button type="primary" @click="showAddDialog = true"><el-icon><Plus /></el-icon>创建试卷</el-button>
+          </div>
         </div>
       </template>
       <el-table v-loading="loading" :data="papers" style="width:100%">
@@ -73,11 +76,14 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, MagicStick } from '@element-plus/icons-vue'
 import QRCode from 'qrcode'
 import { getSubjectList, getGradeList } from '@/api/base'
 import { getPaperList, addPaper, updatePaper, deletePaper as deletePaperApi, publishPaper as publishPaperApi, generatePaperQRCode } from '@/api/paper'
+
+const router = useRouter()
 
 const loading = ref(false)
 const showAddDialog = ref(false)
@@ -98,7 +104,7 @@ const currentPaperId = ref(null)
 
 const loadPapers = async () => { loading.value = true; try { const data = await getPaperList({ page: pagination.page, size: pagination.size }); papers.value = data?.list||[]; pagination.total = data?.total||0 } catch(e) { console.error(e) } finally { loading.value = false } }
 const editPaper = (row) => { editingPaper.value = row; Object.assign(paperForm, row); showAddDialog.value = true }
-const viewPaper = (row) => { console.log('view', row) }
+const viewPaper = (row) => { router.push(`/teacher/paper/${row.id}`) }
 const publishPaper = async (row) => { try { await publishPaperApi(row.id); ElMessage.success('发布成功'); loadPapers() } catch(e) { console.error(e) } }
 const deletePaper = async (row) => { try { await ElMessageBox.confirm('确定删除吗？','提示',{type:'warning'}); await deletePaperApi(row.id); ElMessage.success('删除成功'); loadPapers() } catch(e) { if(e!=='cancel') console.error(e) } }
 const submitPaper = async () => { try { if(editingPaper.value) await updatePaper(editingPaper.value.id, paperForm); else await addPaper(paperForm); ElMessage.success('保存成功'); showAddDialog.value = false; loadPapers() } catch(e) { console.error(e) } }
