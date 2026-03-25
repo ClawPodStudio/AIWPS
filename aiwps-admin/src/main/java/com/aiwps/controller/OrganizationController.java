@@ -48,10 +48,21 @@ public class OrganizationController {
     
     @PutMapping("/{id}")
     public Map<String, Object> update(@PathVariable Long id, @RequestBody Organization organization) {
-        organization.setId(id);
-        boolean success = organizationService.updateById(organization);
+        Organization existing = organizationService.getById(id);
+        if (existing == null) {
+            return Map.of("code", 404, "msg", "机构不存在");
+        }
+        // 只更新传入的字段
+        if (organization.getName() != null) existing.setName(organization.getName());
+        if (organization.getType() != null) existing.setType(organization.getType());
+        if (organization.getProvince() != null) existing.setProvince(organization.getProvince());
+        if (organization.getContactName() != null) existing.setContactName(organization.getContactName());
+        if (organization.getContactMobile() != null) existing.setContactMobile(organization.getContactMobile());
+        if (organization.getStatus() != null) existing.setStatus(organization.getStatus());
+        
+        boolean success = organizationService.updateById(existing);
         if (success) {
-            return Map.of("code", 200, "msg", "success", "data", organization);
+            return Map.of("code", 200, "msg", "success", "data", existing);
         }
         return Map.of("code", 400, "msg", "更新失败");
     }

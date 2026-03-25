@@ -83,9 +83,14 @@ router.beforeEach((to, from, next) => {
     return
   }
   
-  if (to.meta.role && to.meta.role !== userRole) {
-    next('/login')
-    return
+  // 检查角色权限（ORG_ADMIN 等同于 ORG）
+  if (to.meta.role) {
+    const roleMap = { 'ORG': ['ORG', 'ORG_ADMIN'], 'TEACHER': ['TEACHER'], 'STUDENT': ['STUDENT'] }
+    const allowedRoles = roleMap[to.meta.role] || []
+    if (!allowedRoles.includes(userRole)) {
+      next('/login')
+      return
+    }
   }
   
   next()

@@ -13,7 +13,7 @@ public class ClassInfo {
     private Long tenantId;
     private Long gradeId;
     private Long organizationId;
-    private String teacherId;
+    private Long teacherId;
     private Integer studentCount;
     private Integer status;
     private LocalDateTime createdAt;

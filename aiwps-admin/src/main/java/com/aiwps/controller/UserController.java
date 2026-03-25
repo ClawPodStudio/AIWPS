@@ -49,6 +49,40 @@ public class UserController {
         return Map.of("code", 200, "msg", "success", "data", userService.list());
     }
 
+    @PostMapping
+    public Map<String, Object> register(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        String username = (String) params.get("username");
+        String password = (String) params.get("password");
+        String role = (String) params.get("role");
+        String name = (String) params.get("name");
+        
+        if (username == null || password == null || role == null) {
+            result.put("code", 400);
+            result.put("msg", "缺少必要参数");
+            return result;
+        }
+        
+        com.aiwps.entity.User user = new com.aiwps.entity.User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setRole(role);
+        user.setName(name != null ? name : username);
+        user.setStatus(1);
+        user.setTenantId(1L); // 默认租户
+        
+        boolean success = userService.save(user);
+        if (success) {
+            result.put("code", 200);
+            result.put("msg", "注册成功");
+            result.put("data", user);
+        } else {
+            result.put("code", 500);
+            result.put("msg", "注册失败");
+        }
+        return result;
+    }
+
     @PutMapping("/{id}")
     public Map<String, Object> update(@PathVariable Long id, @RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<>();
