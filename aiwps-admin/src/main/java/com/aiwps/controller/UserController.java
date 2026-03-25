@@ -18,8 +18,9 @@ public class UserController {
     public Map<String, Object> login(@RequestBody Map<String, String> params) {
         String username = params.get("username");
         String password = params.get("password");
+        String role = params.get("role"); // 前端传入的角色
         try {
-            Map<String, Object> data = userService.login(username, password);
+            Map<String, Object> data = userService.login(username, password, role);
             return Map.of("code", 200, "msg", "success", "data", data);
         } catch (Exception e) {
             return Map.of("code", 401, "msg", e.getMessage());
