@@ -1,5 +1,7 @@
 package com.aiwps.controller;
 
+import com.aiwps.ai.dto.AiQuestionRequest;
+import com.aiwps.ai.service.AiQuestionService;
 import com.aiwps.entity.Paper;
 import com.aiwps.entity.PaperQuestion;
 import com.aiwps.entity.Question;
@@ -8,12 +10,14 @@ import com.aiwps.mapper.PaperQuestionMapper;
 import com.aiwps.mapper.QuestionMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/paper")
 public class PaperGenerateController {
@@ -26,6 +30,9 @@ public class PaperGenerateController {
     
     @Autowired
     private QuestionMapper questionMapper;
+    
+    @Autowired
+    private AiQuestionService aiQuestionService;
     
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -46,6 +53,10 @@ public class PaperGenerateController {
             Map<String, Integer> questionTypes = objectMapper.convertValue(params.get("questionTypes"), Map.class);
             Integer totalScore = params.get("totalScore") != null ? Integer.valueOf(params.get("totalScore").toString()) : 100;
             
+            // 计算总题目数和每题分值
+            int totalQuestions = questionTypes.values().stream().mapToInt(Integer::intValue).sum();
+            int scorePerQuestion = totalScore / (totalQuestions > 0 ? totalQuestions : 1);
+            
             // 创建试卷
             Paper paper = new Paper();
             paper.setTenantId(1L);
@@ -63,49 +74,107 @@ public class PaperGenerateController {
             // 按题型生成题目
             List<Map<String, Object>> paperQuestions = new ArrayList<>();
             int currentScore = 0;
-            int totalQuestions = questionTypes.values().stream().mapToInt(Integer::intValue).sum();
-            int scorePerQuestion = totalScore / (totalQuestions > 0 ? totalQuestions : 1);
             
             for (Map.Entry<String, Integer> entry : questionTypes.entrySet()) {
                 String type = entry.getKey();
                 int count = entry.getValue();
                 
-                // 查询该题型的题目
-                LambdaQueryWrapper<Question> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(Question::getSubjectId, subjectId);
-                if (gradeId != null) {
-                    wrapper.eq(Question::getGradeId, gradeId);
-                }
-                wrapper.eq(Question::getType, type);
-                wrapper.eq(Question::getStatus, 1);
-                wrapper.last("LIMIT " + count * 2);
+                if (count <= 0) continue;
                 
-                List<Question> questions = questionMapper.selectList(wrapper);
-                
-                int added = 0;
-                for (Question q : questions) {
-                    if (added >= count) break;
+                try {
+                    // 使用AI生成题目
+                    AiQuestionRequest request = new AiQuestionRequest();
+                    request.setSubjectId(subjectId);
+                    request.setGradeId(gradeId);
+                    request.setKnowledgePointIds(knowledgePointIds);
+                    request.setQuestionType(mapQuestionType(type));
+                    request.setDifficulty(calculateDifficulty(type));
+                    request.setCount(count);
+                    request.setTenantId(1L);
                     
-                    // 添加到试卷
-                    PaperQuestion pq = new PaperQuestion();
-                    pq.setPaperId(paper.getId());
-                    pq.setQuestionId(q.getId());
-                    pq.setScore(scorePerQuestion);
-                    pq.setQuestionOrder(paperQuestions.size() + 1);
-                    pq.setCreatedAt(LocalDateTime.now());
-                    paperQuestionMapper.insert(pq);
+                    List<Question> aiQuestions = aiQuestionService.generateQuestions(request);
                     
-                    paperQuestions.add(Map.of(
-                        "id", q.getId(),
-                        "content", q.getContent(),
-                        "answer", q.getAnswer(),
-                        "type", q.getType(),
-                        "difficulty", q.getDifficulty(),
-                        "score", scorePerQuestion
-                    ));
+                    // 如果AI生成失败或数量不足，从题库补充
+                    int needed = count - aiQuestions.size();
+                    List<Question> dbQuestions = new ArrayList<>();
+                    if (needed > 0) {
+                        dbQuestions = getQuestionsFromDb(subjectId, gradeId, type, needed);
+                    }
                     
-                    currentScore += scorePerQuestion;
-                    added++;
+                    // 合并AI生成和数据库题目
+                    List<Question> allQuestions = new ArrayList<>();
+                    allQuestions.addAll(aiQuestions);
+                    allQuestions.addAll(dbQuestions);
+                    
+                    int added = 0;
+                    for (Question q : allQuestions) {
+                        if (added >= count) break;
+                        
+                        // 保存题目
+                        if (q.getId() == null) {
+                            q.setTenantId(1L);
+                            q.setStatus(1);
+                            q.setCreatedAt(LocalDateTime.now());
+                            questionMapper.insert(q);
+                        }
+                        
+                        // 添加到试卷
+                        PaperQuestion pq = new PaperQuestion();
+                        pq.setPaperId(paper.getId());
+                        pq.setQuestionId(q.getId());
+                        pq.setScore(scorePerQuestion);
+                        pq.setQuestionOrder(paperQuestions.size() + 1);
+                        pq.setCreatedAt(LocalDateTime.now());
+                        paperQuestionMapper.insert(pq);
+                        
+                        paperQuestions.add(Map.of(
+                            "id", q.getId(),
+                            "content", q.getContent(),
+                            "answer", q.getAnswer(),
+                            "type", q.getType(),
+                            "difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2,
+                            "score", scorePerQuestion,
+                            "optionA", q.getOptionA() != null ? q.getOptionA() : "",
+                            "optionB", q.getOptionB() != null ? q.getOptionB() : "",
+                            "optionC", q.getOptionC() != null ? q.getOptionC() : "",
+                            "optionD", q.getOptionD() != null ? q.getOptionD() : "",
+                            "analysis", q.getAnalysis() != null ? q.getAnalysis() : ""
+                        ));
+                        
+                        currentScore += scorePerQuestion;
+                        added++;
+                    }
+                    
+                    log.info("AI生成{}型题目{}道（AI:{}, 题库:{}）", type, added, aiQuestions.size(), dbQuestions.size());
+                    
+                } catch (Exception e) {
+                    log.error("生成{}型题目失败: {}", type, e.getMessage());
+                    // 发生错误时从题库补充
+                    List<Question> dbQuestions = getQuestionsFromDb(subjectId, gradeId, type, count);
+                    for (Question q : dbQuestions) {
+                        PaperQuestion pq = new PaperQuestion();
+                        pq.setPaperId(paper.getId());
+                        pq.setQuestionId(q.getId());
+                        pq.setScore(scorePerQuestion);
+                        pq.setQuestionOrder(paperQuestions.size() + 1);
+                        pq.setCreatedAt(LocalDateTime.now());
+                        paperQuestionMapper.insert(pq);
+                        
+                        paperQuestions.add(Map.of(
+                            "id", q.getId(),
+                            "content", q.getContent(),
+                            "answer", q.getAnswer(),
+                            "type", q.getType(),
+                            "difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2,
+                            "score", scorePerQuestion,
+                            "optionA", q.getOptionA() != null ? q.getOptionA() : "",
+                            "optionB", q.getOptionB() != null ? q.getOptionB() : "",
+                            "optionC", q.getOptionC() != null ? q.getOptionC() : "",
+                            "optionD", q.getOptionD() != null ? q.getOptionD() : "",
+                            "analysis", q.getAnalysis() != null ? q.getAnalysis() : ""
+                        ));
+                        currentScore += scorePerQuestion;
+                    }
                 }
             }
             
@@ -124,11 +193,53 @@ public class PaperGenerateController {
             ));
             
         } catch (Exception e) {
+            log.error("AI生成试卷失败: {}", e.getMessage(), e);
             result.put("code", 500);
             result.put("message", "生成失败: " + e.getMessage());
         }
         
         return result;
+    }
+    
+    /**
+     * 从数据库获取题目
+     */
+    private List<Question> getQuestionsFromDb(Long subjectId, Long gradeId, String type, int limit) {
+        LambdaQueryWrapper<Question> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Question::getSubjectId, subjectId);
+        if (gradeId != null) {
+            wrapper.eq(Question::getGradeId, gradeId);
+        }
+        wrapper.eq(Question::getType, type);
+        wrapper.eq(Question::getStatus, 1);
+        wrapper.last("LIMIT " + limit);
+        
+        return questionMapper.selectList(wrapper);
+    }
+    
+    /**
+     * 映射题型
+     */
+    private String mapQuestionType(String type) {
+        return switch (type) {
+            case "CHOICE" -> "choice";
+            case "BLANK" -> "fill_blank";
+            case "ANSWER" -> "essay";
+            default -> type.toLowerCase();
+        };
+    }
+    
+    /**
+     * 根据题型计算难度
+     */
+    private Integer calculateDifficulty(String type) {
+        // 选择题难度低一些，解答题难度高一些
+        return switch (type) {
+            case "CHOICE" -> 2;
+            case "BLANK" -> 2;
+            case "ANSWER" -> 3;
+            default -> 2;
+        };
     }
 
     /**
