@@ -173,7 +173,6 @@ public class PaperGenerateController {
                             put("optionD", q.getOptionD() != null ? q.getOptionD() : "");
                             put("analysis", q.getAnalysis() != null ? q.getAnalysis() : "");
                         }});
-
                         currentScore += scorePerQuestion;
                     }
                 }
