@@ -68,6 +68,7 @@
                 <el-radio-button label="STUDENT">学生</el-radio-button>
                 <el-radio-button label="TEACHER">老师</el-radio-button>
                 <el-radio-button label="ORG_ADMIN">机构</el-radio-button>
+                <el-radio-button label="ADMIN">管理员</el-radio-button>
               </el-radio-group>
             </el-form-item>
             
@@ -132,15 +133,19 @@ const handleLogin = async () => {
       if (res && res.token) {
         localStorage.setItem('token', res.token)
         localStorage.setItem('userInfo', JSON.stringify(res.user || {}))
-        localStorage.setItem('role', form.role)
-        
+        // 优先使用接口返回的角色，其次使用表单选择的角色
+        const effectiveRole = res.role || form.role
+        localStorage.setItem('role', effectiveRole)
+
         ElMessage.success('登录成功')
-        
+
         // 根据角色跳转
-        if (form.role === 'STUDENT') {
+        if (effectiveRole === 'STUDENT') {
           router.push('/student/dashboard')
-        } else if (form.role === 'TEACHER') {
+        } else if (effectiveRole === 'TEACHER') {
           router.push('/teacher/dashboard')
+        } else if (effectiveRole === 'ADMIN') {
+          router.push('/admin/dashboard')
         } else {
           router.push('/org/dashboard')
         }
