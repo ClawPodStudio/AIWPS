@@ -61,7 +61,23 @@ const routes = [
       { path: 'settings', name: 'OrgSettings', component: () => import('@/views/org/Settings.vue'), meta: { title: '机构设置' } }
     ]
   },
-  
+
+  // Admin
+  {
+    path: '/admin',
+    name: 'AdminLayout',
+    component: () => import('@/views/admin/AdminLayout.vue'),
+    meta: { role: 'ADMIN' },
+    children: [
+      { path: '', redirect: '/admin/dashboard' },
+      { path: 'dashboard', name: 'AdminDashboard', component: () => import('@/views/admin/AdminDashboard.vue'), meta: { title: '数据看板' } },
+      { path: 'tenants', name: 'TenantList', component: () => import('@/views/admin/TenantList.vue'), meta: { title: '租户管理' } },
+      { path: 'tenant/new', name: 'TenantNew', component: () => import('@/views/admin/TenantForm.vue'), meta: { title: '新建租户' } },
+      { path: 'tenant/:id/edit', name: 'TenantEdit', component: () => import('@/views/admin/TenantForm.vue'), meta: { title: '编辑租户' } },
+      { path: 'statistics', name: 'AdminStatistics', component: () => import('@/views/admin/AdminStatistics.vue'), meta: { title: '全局统计' } }
+    ]
+  },
+
   // 404
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/common/NotFound.vue') }
 ]
@@ -87,7 +103,7 @@ router.beforeEach((to, from, next) => {
   
   // 检查角色权限（ORG_ADMIN 等同于 ORG）
   if (to.meta.role) {
-    const roleMap = { 'ORG': ['ORG', 'ORG_ADMIN'], 'TEACHER': ['TEACHER'], 'STUDENT': ['STUDENT'] }
+    const roleMap = { 'ORG': ['ORG', 'ORG_ADMIN'], 'TEACHER': ['TEACHER'], 'STUDENT': ['STUDENT'], 'ADMIN': ['ADMIN'] }
     const allowedRoles = roleMap[to.meta.role] || []
     if (!allowedRoles.includes(userRole)) {
       next('/login')
