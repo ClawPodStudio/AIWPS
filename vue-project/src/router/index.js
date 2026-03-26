@@ -58,6 +58,7 @@ const routes = [
       { path: 'teachers', name: 'TeacherList', component: () => import('@/views/org/TeacherList.vue'), meta: { title: '教师管理' } },
       { path: 'classes', name: 'ClassManage', component: () => import('@/views/org/ClassManage.vue'), meta: { title: '班级管理' } },
       { path: 'statistics', name: 'OrgStatistics', component: () => import('@/views/org/Statistics.vue'), meta: { title: '数据看板' } },
+      { path: 'class-statistics', name: 'ClassStatistics', component: () => import('@/views/org/ClassStatistics.vue'), meta: { title: '班级整体分析' } },
       { path: 'settings', name: 'OrgSettings', component: () => import('@/views/org/Settings.vue'), meta: { title: '机构设置' } }
     ]
   },
