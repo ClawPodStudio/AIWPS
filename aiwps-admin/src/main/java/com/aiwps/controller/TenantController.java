@@ -1,5 +1,7 @@
 package com.aiwps.controller;
 
+import com.aiwps.annotation.TenantFilter;
+import com.aiwps.context.TenantContextHolder;
 import com.aiwps.entity.Tenant;
 import com.aiwps.service.TenantService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tenant")
+@TenantFilter
 public class TenantController {
     
     @Autowired
@@ -19,8 +22,15 @@ public class TenantController {
     
     @GetMapping("/list")
     public Map<String, Object> list() {
-        List<Tenant> list = tenantService.list(new LambdaQueryWrapper<Tenant>()
-                .orderByDesc(Tenant::getCreatedAt));
+        // 获取当前租户上下文进行过滤
+        Long currentTenantId = TenantContextHolder.getCurrentTenantId();
+        LambdaQueryWrapper<Tenant> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(Tenant::getCreatedAt);
+        // 如果有租户上下文，则只查询当前租户的数据
+        if (currentTenantId != null) {
+            wrapper.eq(Tenant::getId, currentTenantId);
+        }
+        List<Tenant> list = tenantService.list(wrapper);
         return Map.of("code", 200, "msg", "success", "data", list);
     }
     
