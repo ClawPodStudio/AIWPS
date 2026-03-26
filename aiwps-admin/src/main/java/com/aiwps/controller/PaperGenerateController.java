@@ -127,19 +127,19 @@ public class PaperGenerateController {
                         pq.setCreatedAt(LocalDateTime.now());
                         paperQuestionMapper.insert(pq);
                         
-                        paperQuestions.add(Map.of(
-                            "id", q.getId(),
-                            "content", q.getContent(),
-                            "answer", q.getAnswer(),
-                            "type", q.getType(),
-                            "difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2,
-                            "score", scorePerQuestion,
-                            "optionA", q.getOptionA() != null ? q.getOptionA() : "",
-                            "optionB", q.getOptionB() != null ? q.getOptionB() : "",
-                            "optionC", q.getOptionC() != null ? q.getOptionC() : "",
-                            "optionD", q.getOptionD() != null ? q.getOptionD() : "",
-                            "analysis", q.getAnalysis() != null ? q.getAnalysis() : ""
-                        ));
+                        paperQuestions.add(new HashMap<>() {{
+                            put("id", q.getId());
+                            put("content", q.getContent());
+                            put("answer", q.getAnswer());
+                            put("type", q.getType());
+                            put("difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2);
+                            put("score", scorePerQuestion);
+                            put("optionA", q.getOptionA() != null ? q.getOptionA() : "");
+                            put("optionB", q.getOptionB() != null ? q.getOptionB() : "");
+                            put("optionC", q.getOptionC() != null ? q.getOptionC() : "");
+                            put("optionD", q.getOptionD() != null ? q.getOptionD() : "");
+                            put("analysis", q.getAnalysis() != null ? q.getAnalysis() : "");
+                        }});
                         
                         currentScore += scorePerQuestion;
                         added++;
@@ -160,19 +160,19 @@ public class PaperGenerateController {
                         pq.setCreatedAt(LocalDateTime.now());
                         paperQuestionMapper.insert(pq);
                         
-                        paperQuestions.add(Map.of(
-                            "id", q.getId(),
-                            "content", q.getContent(),
-                            "answer", q.getAnswer(),
-                            "type", q.getType(),
-                            "difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2,
-                            "score", scorePerQuestion,
-                            "optionA", q.getOptionA() != null ? q.getOptionA() : "",
-                            "optionB", q.getOptionB() != null ? q.getOptionB() : "",
-                            "optionC", q.getOptionC() != null ? q.getOptionC() : "",
-                            "optionD", q.getOptionD() != null ? q.getOptionD() : "",
-                            "analysis", q.getAnalysis() != null ? q.getAnalysis() : ""
-                        ));
+                        paperQuestions.add(new HashMap<>() {{
+                            put("id", q.getId());
+                            put("content", q.getContent());
+                            put("answer", q.getAnswer());
+                            put("type", q.getType());
+                            put("difficulty", q.getDifficulty() != null ? q.getDifficulty() : 2);
+                            put("score", scorePerQuestion);
+                            put("optionA", q.getOptionA() != null ? q.getOptionA() : "");
+                            put("optionB", q.getOptionB() != null ? q.getOptionB() : "");
+                            put("optionC", q.getOptionC() != null ? q.getOptionC() : "");
+                            put("optionD", q.getOptionD() != null ? q.getOptionD() : "");
+                            put("analysis", q.getAnalysis() != null ? q.getAnalysis() : "");
+                        }});
                         currentScore += scorePerQuestion;
                     }
                 }
